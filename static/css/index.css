@@ -751,3 +751,21 @@ a:focus {
 
 
 
+
+/* 360° comparison videos */
+.comparison-videos video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2160 / 684;
+  background: #e8e8e8;
+  margin-bottom: 0.75rem;
+  border-radius: 6px;
+}
+.comparison-videos video.group-start {
+  margin-top: 2rem;
+}
+.comparison-caption {
+  margin-top: 1rem;
+  color: var(--text-secondary, #555);
+}
