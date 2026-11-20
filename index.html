@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="TextureInner: Textured Underlying Body Reconstruction Using Equivariant Point Network - Yi Wei Fung, King Hann Lim, Jonathan Then Sien Phang">
+  <meta name="description" content="TextureInner reconstructs a textured underlying body from clothed 3D human scans using SE(3)-equivariant clothing tightness fields, preserving personal details that parametric body fitting omits.">
+  <meta name="keywords" content="Underlying body reconstruction, Clothed human scans, Equivariant point network, Clothing tightness, Body shape estimation, Textured human">
+  <meta name="author" content="Yi Wei Fung, King Hann Lim, Jonathan Then Sien Phang">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+  <!-- TODO: This verification token was issued for partcloth3d.github.io; replace it with one for the new domain -->
+  <meta name="google-site-verification" content="weDbdObbjQuX4g8naHCXI6ZmTjDCvX5wzm2PGtBs1mA" />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Curtin University Malaysia">
+  <meta property="og:title" content="Textured Underlying Body Reconstruction Using Equivariant Point Network">
+  <meta property="og:description" content="TextureInner reconstructs a textured underlying body from clothed 3D human scans using SE(3)-equivariant clothing tightness fields, preserving personal details that parametric body fitting omits.">
+  <meta property="og:url" content="https://textureinner.github.io/">
+  <meta property="og:image" content="https://textureinner.github.io/img/result.png">
+  <meta property="og:image:width" content="1920">
+  <meta property="og:image:height" content="1080">
+  <meta property="og:image:alt" content="Textured Underlying Body Reconstruction Using Equivariant Point Network - Research Preview">
+  <!-- TODO: Uncomment with the real date once published
+  <meta property="article:published_time" content="2026-01-01T00:00:00.000Z"> -->
+  <meta property="article:author" content="Yi Wei Fung">
+  <meta property="article:section" content="Research">
+  <meta property="article:tag" content="Underlying body reconstruction">
+  <meta property="article:tag" content="Clothed human scans">
+  <meta property="article:tag" content="Equivariant point network">
+  <meta property="article:tag" content="Clothing tightness">
+  <meta property="article:tag" content="Textured human">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@CurtinMalaysia">
+  <!-- TODO: Replace with first author's Twitter handle -->
+  <meta name="twitter:creator" content="@AUTHOR_TWITTER_HANDLE">
+  <meta name="twitter:title" content="Textured Underlying Body Reconstruction Using Equivariant Point Network">
+  <meta name="twitter:description" content="TextureInner reconstructs a textured underlying body from clothed 3D human scans using SE(3)-equivariant clothing tightness fields, preserving personal details that parametric body fitting omits.">
+  <meta name="twitter:image" content="https://textureinner.github.io/img/result.png">
+  <meta name="twitter:image:alt" content="Textured Underlying Body Reconstruction Using Equivariant Point Network - Research Preview">
+
+  <!-- Academic/Research Specific -->
+  <meta name="citation_title" content="Textured Underlying Body Reconstruction Using Equivariant Point Network">
+  <meta name="citation_author" content="Fung, Yi Wei">
+  <meta name="citation_author_institution" content="Curtin University Malaysia">
+  <meta name="citation_author" content="Lim, King Hann">
+  <meta name="citation_author_institution" content="Curtin University Malaysia">
+  <meta name="citation_author" content="Phang, Jonathan Then Sien">
+  <meta name="citation_author_institution" content="Curtin Malaysia Research Institute">
+  <meta name="citation_publication_date" content="2026">
+  <!-- TODO: Uncomment once the paper is published
+  <meta name="citation_conference_title" content="CONFERENCE_NAME">
+  <meta name="citation_pdf_url" content="https://textureinner.github.io/static/pdfs/paper.pdf">
+  -->
+  
+  <!-- Additional SEO -->
+  <meta name="theme-color" content="#2563eb">
+  <meta name="msapplication-TileColor" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://ajax.googleapis.com">
+  <link rel="preconnect" href="https://documentcloud.adobe.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+
+  <title>TextureInner: Textured Underlying Body Reconstruction Using Equivariant Point Network - Yi Wei Fung, King Hann Lim, Jonathan Then Sien Phang | Academic Research</title>
+  
+  <!-- Favicon and App Icons -->
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link rel="apple-touch-icon" href="static/images/favicon.ico">
+  
+  <!-- Critical CSS - Load synchronously -->
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <style>
+    .paper-figure { margin: 0 0 1.5rem; }
+    .paper-figure img { display: block; width: 100%; height: auto; border-radius: 8px; }
+    #method .content { margin-top: 1rem; }
+    .paper-figure figcaption { margin-top: 0.75rem; font-size: 0.95rem; color: #4a4a4a; text-align: justify; }
+    #results .paper-figure + .paper-figure { margin-top: 2.5rem; }
+    .paper-figure.is-narrow { max-width: 55%; margin-left: auto; margin-right: auto; }
+    @media (max-width: 768px) { .paper-figure.is-narrow { max-width: 100%; } }
+  </style>
+  
+  <!-- Non-critical CSS - Load asynchronously -->
+  <link rel="preload" href="static/css/bulma-carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/bulma-slider.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  
+  <!-- Fallback for browsers that don't support preload -->
+  <noscript>
+    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  </noscript>
+  
+  <!-- Fonts - Optimized loading -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Defer non-critical JavaScript -->
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/bulma-carousel.min.js"></script>
+  <script defer src="static/js/bulma-slider.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+  
+  <!-- Structured Data for Academic Papers -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "Textured Underlying Body Reconstruction Using Equivariant Point Network",
+    "description": "TextureInner reconstructs a textured underlying body from clothed 3D human scans using SE(3)-equivariant clothing tightness fields, preserving personal details that parametric body fitting omits.",
+    "author": [
+      {
+        "@type": "Person",
+        "name": "Yi Wei Fung",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "Curtin University Malaysia"
+        }
+      },
+      {
+        "@type": "Person",
+        "name": "King Hann Lim",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "Curtin University Malaysia"
+        }
+      },
+      {
+        "@type": "Person",
+        "name": "Jonathan Then Sien Phang",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "Curtin Malaysia Research Institute"
+        }
+      }
+    ],
+    "url": "https://textureinner.github.io/",
+    "image": "https://textureinner.github.io/img/result.png",
+    "keywords": ["Underlying body reconstruction", "Clothed human scans", "Equivariant point network", "Clothing tightness", "Textured human", "computer vision"],
+    "abstract": "Body shape recovery is critical in reconstructing a full body after the removal of clothing. Diffusion-based methods can synthesize geometry and skin texture for occluded body parts, but often produce inconsistent body shapes in hallucinated regions. Parametric body fitting methods can produce accurate body estimates but omit personal details. This study proposed a sparse-to-dense reconstruction method based on clothing tightness fields to recover body geometry while preserving individual details. Sparse stage predicts displacement vector from cloth to body surface using locally approximate SE(3)-equivariant features. Dense stage propagates these predictions via weighted interpolation and restricts the displacement to only clothing vertices. Experiments are conducted to compare the proposed method against existing SMPL fitting methods on underlying body reconstruction across diverse poses and clothing categories.",
+    "citation": "Fung, Y. W., Lim, K. H., Phang, J. T. S. Textured Underlying Body Reconstruction Using Equivariant Point Network.",
+    "isAccessibleForFree": true,
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "mainEntity": {
+      "@type": "WebPage",
+      "@id": "https://textureinner.github.io/"
+    },
+    "about": [
+      {
+        "@type": "Thing",
+        "name": "Underlying Body Reconstruction"
+      },
+      {
+        "@type": "Thing", 
+        "name": "Clothed Human Modeling"
+      }
+    ]
+  }
+  </script>
+  
+  <!-- Website/Organization Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Curtin University Malaysia",
+    "url": "https://www.curtin.edu.my",
+    "logo": "https://textureinner.github.io/static/images/favicon.ico",
+    "sameAs": [
+      "https://twitter.com/YOUR_TWITTER_HANDLE",
+      "https://github.com/wyedoubleu"
+    ]
+  }
+  </script>
+</head>
+<body>
+
+
+  <!-- Scroll to Top Button -->
+  <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <!-- More Works Dropdown (hidden until related works are added — remove style="display:none" to show) -->
+  <div class="more-works-container" style="display:none">
+    <button class="more-works-btn" onclick="toggleMoreWorks()" title="View More Works from Our Lab">
+      <i class="fas fa-flask"></i>
+      More Works
+      <i class="fas fa-chevron-down dropdown-arrow"></i>
+    </button>
+    <div class="more-works-dropdown" id="moreWorksDropdown">
+      <div class="dropdown-header">
+        <h4>More Works from Our Lab</h4>
+        <button class="close-btn" onclick="toggleMoreWorks()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="works-list">
+        <!-- TODO: Replace with your lab's related works -->
+        <a href="https://arxiv.org/abs/PAPER_ID_1" class="work-item" target="_blank">
+          <div class="work-info">
+            <!-- TODO: Replace with actual paper title -->
+            <h5>Paper Title 1</h5>
+            <!-- TODO: Replace with brief description -->
+            <p>Brief description of the work and its main contribution.</p>
+            <!-- TODO: Replace with venue and year -->
+            <span class="work-venue">Conference/Journal 2024</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <!-- TODO: Add more related works or remove extra items -->
+        <a href="https://arxiv.org/abs/PAPER_ID_2" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>Paper Title 2</h5>
+            <p>Brief description of the work and its main contribution.</p>
+            <span class="work-venue">Conference/Journal 2023</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://arxiv.org/abs/PAPER_ID_3" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>Paper Title 3</h5>
+            <p>Brief description of the work and its main contribution.</p>
+            <span class="work-venue">Conference/Journal 2023</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <main id="main-content">
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">Textured Underlying Body Reconstruction Using Equivariant Point Network</h1>
+            <div class="is-size-5 publication-authors">
+              <!-- TODO: Add personal links (href) for each author -->
+              <span class="author-block">
+                <a href="#" target="_blank">Yi Wei Fung</a><sup>1</sup>,</span>
+              <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=Lcy-CeUAAAAJ&hl=en" target="_blank">King Hann Lim</a><sup>1</sup>,</span>
+              <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=YQpv_tsAAAAJ&hl=en&oi=ao" target="_blank">Jonathan Then Sien Phang</a><sup>2</sup>
+              </span>
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>1</sup>Curtin University Malaysia,</span>
+              <span class="author-block"><sup>2</sup>Curtin Malaysia Research Institute</span>
+            </div>
+
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <!-- TODO: Once published, restore the link:
+                     <a href="https://arxiv.org/pdf/ARXIV_ID.pdf" target="_blank" class="external-link button is-normal is-rounded is-dark"> -->
+                <span class="link-block">
+                  <a class="external-link button is-normal is-rounded is-dark" disabled aria-disabled="true">
+                    <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                    <span>Paper (Coming Soon)</span>
+                  </a>
+                </span>
+
+                <!-- TODO: Once the code is public, restore the link:
+                     <a href="https://github.com/wyedoubleu/TextureInner" target="_blank" class="external-link button is-normal is-rounded is-dark"> -->
+                <span class="link-block">
+                  <a class="external-link button is-normal is-rounded is-dark" disabled aria-disabled="true">
+                    <span class="icon"><i class="fab fa-github"></i></span>
+                    <span>Code (Coming Soon)</span>
+                  </a>
+                </span>
+
+                <!-- TODO: Update with your arXiv paper ID 
+                <span class="link-block">
+                  <a href="https://arxiv.org/abs/<ARXIV PAPER ID>" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon"><i class="ai ai-arxiv"></i></span>
+                    <span>arXiv</span>
+                  </a>
+                </span>-->
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+<!-- Teaser / overview figure -->
+<!-- TODO: Add the overview diagram and its caption, then remove the comment markers below.
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <figure class="paper-figure">
+        <img src="img/overview.png" alt="TextureInner overview">
+      </figure>
+      <h2 class="subtitle has-text-centered">
+        CAPTION
+      </h2>
+    </div>
+  </div>
+</section>
+-->
+<!-- End teaser -->
+
+<!-- Turntable video -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video autoplay muted loop playsinline preload="metadata" style="width: 100%; height: auto;">
+        <source src="videos/th2_0021_turntable.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </div>
+</section>
+<!-- End turntable video -->
+
+<!-- Paper abstract -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Body shape recovery is critical in reconstructing a full body after the removal of clothing. Diffusion-based methods can synthesize geometry and skin texture for occluded body parts, but often produce inconsistent body shapes in hallucinated regions. Parametric body fitting methods can produce accurate body estimates but omit personal details. This study proposed a sparse-to-dense reconstruction method based on clothing tightness fields to recover body geometry while preserving individual details. Sparse stage predicts displacement vector from cloth to body surface using locally approximate SE(3)-equivariant features. Dense stage propagates these predictions via weighted interpolation and restricts the displacement to only clothing vertices. Experiments are conducted to compare the proposed method against existing SMPL fitting methods on underlying body reconstruction across diverse poses and clothing categories. 
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End paper abstract -->
+
+
+<!-- Method -->
+<section class="section" id="method">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column">
+        <h2 class="title is-3 has-text-centered">Methodology</h2>
+        <figure class="paper-figure">
+          <img src="img/textured_inner_metho.png" alt="TextureInner pipeline: (A) sparse body point prediction from equivariant and invariant features; (B) dense body reconstruction by weighted k-NN interpolation and vertex recoloring" loading="lazy">
+        </figure>
+        <div class="content has-text-justified">
+          <p><strong>TextureInner</strong> recovers a textured underlying body from a clothed scan in two stages.</p>
+          <p>
+            <strong>(A) Sparse Body Point Prediction.</strong>
+            The input scan is sampled into sparse surface points.
+            An EPN encoder extracts SE(3)-equivariant features and send it to the direction head and a magnitude head to predict a tightness vector that moves each surface point inward to its body point.
+          </p>
+          <p>
+            <strong>(B) Dense Body Reconstruction.</strong>
+            The paired samples form a sparse displacement field, which weighted k-NN interpolation propagates to every scan vertex to give output vertices.
+            Clothing segmentation labels limit this update to clothing vertices, so the body and hair keep their original
+            geometry and texture, while clothing vertices are recolored with skin color to produce the textured underlying body.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End method -->
+
+
+<!-- Results -->
+<section class="section" id="results">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column">
+        <h2 class="title is-3 has-text-centered">Results</h2>
+        <figure class="paper-figure">
+          <img src="img/result.png" alt="Qualitative comparison of underlying body reconstructions from LVD, NICP, ETCH and TextureInner against ground truth for six clothed scans" loading="lazy">
+          <figcaption>
+            Comparison of the proposed methods with existing body fitting methods LVD, NICP and ETCH across different clothing categories and challenging poses.
+          </figcaption>
+        </figure>
+        <figure class="paper-figure is-narrow">
+          <img src="img/displacement.png" alt="Per-vertex L2 error heatmaps for LVD, NICP, ETCH and TextureInner on two subjects" loading="lazy">
+          <figcaption>
+            Per-vertex error of the reconstructed body, measured as the L2 distance to the ground-truth body and shown from low (blue) to high (red).
+            Compared with LVD, NICP and ETCH, the proposed method keeps the error low across the whole body, including the torso and legs where clothing hides the body.
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End results -->
+
+
+
+<!--BibTex citation -->
+  <section class="section hero is-light" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <div class="bibtex-header">
+        <h2 class="title">BibTeX</h2>
+        <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
+          <i class="fas fa-copy"></i>
+          <span class="copy-text">Copy</span>
+        </button>
+      </div>
+      <!-- TODO: Update journal/venue and year once published -->
+      <pre id="bibtex-code"><code>@article{fung2026textureinner,
+  title={Textured Underlying Body Reconstruction Using Equivariant Point Network},
+  author={Fung, Yi Wei and Lim, King Hann and Phang, Jonathan Then Sien},
+  journal={TO BE CONFIRMED},
+  year={2026}
+}</code></pre>
+    </div>
+</section>
+<!--End BibTex citation -->
+  </main>
+
+
+  <footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+
+          <p>
+            Website is based on the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Statcounter tracking code -->
+  
+<!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
+
+    <!-- End of Statcounter Code -->
+
+  </body>
+  </html>
